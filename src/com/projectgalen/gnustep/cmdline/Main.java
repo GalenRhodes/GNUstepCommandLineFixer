@@ -1,28 +1,64 @@
 package com.projectgalen.gnustep.cmdline;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class Main {
 
     public static void main(String[] args) {
         try {
+            boolean first = true;
+            boolean semi = false;
+            String regex = "^-fobjc-runtime\\=(gnustep)-([0-9]+\\.[0-9]+)";
+
             /*
              * Remove Duplicates
              */
-            Set<String> argSet = new TreeSet<>();
-            for (int i = 0; i < args.length; i++) {
-                argSet.add(args[i]);
+            Set<String> argSet = new LinkedHashSet<>();
+            List<String> argList = new ArrayList<>();
+            Pattern p = Pattern.compile(regex);
+
+            Collections.addAll(argSet, args);
+
+            for(String s : argSet) {
+                if(p.matcher(s).find()) argList.add(s);
             }
 
-            for (String s : argSet) {
-                System.out.printf("Arg> \"%s\"%n", s);
+            if(argList.size() > 1) {
+                Collections.sort(argList);
+                argList.remove((argList.size() - 1));
+                argSet.removeAll(argList);
             }
 
+            try {
+                String prop = "com.projectgalen.gnustep,cmdline.semicolonseparator";
+                String bool = System.getProperty(prop, "false");
+                semi = Boolean.getBoolean(bool);
+            }
+            catch(Exception e) {}
+
+            for(String s : argSet) {
+                String item = s.replace("\\", "\\\\");
+
+                if(semi) {
+                    if(first) first = false;
+                    else System.out.print(';');
+                    System.out.print(item.replace(";", "\\;"));
+                }
+                else {
+                    if(first) first = false;
+                    else System.out.print(' ');
+                    System.out.print(item.replace(" ", "\\ "));
+                }
+            }
+
+            System.out.print(System.lineSeparator());
             System.exit(0);
-        } catch (Exception e) {
+        }
+        catch(Exception e) {
             System.err.printf("EXCEPTION: %s%n", e.getMessage());
             System.exit(1);
         }
     }
+
 }
