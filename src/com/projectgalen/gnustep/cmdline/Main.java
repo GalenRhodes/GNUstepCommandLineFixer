@@ -31,11 +31,11 @@ public class Main {
             }
 
             try {
-                String prop = "com.projectgalen.gnustep,cmdline.semicolonseparator";
+                String prop = "com.projectgalen.gnustep.cmdline.semicolonseparator";
                 String bool = System.getProperty(prop, "false");
                 semi = Boolean.getBoolean(bool);
             }
-            catch(Exception e) {}
+            catch(Exception e) { System.err.println(e.getMessage()); }
 
             for(String s : argSet) {
                 String item = s.replace("\\", "\\\\");
