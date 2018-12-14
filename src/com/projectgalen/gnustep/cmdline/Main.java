@@ -31,9 +31,7 @@ public class Main {
             }
 
             try {
-                String prop = "com.projectgalen.gnustep.cmdline.semicolonseparator";
-                String bool = System.getProperty(prop, "false");
-                semi = Boolean.getBoolean(bool);
+                semi = Boolean.getBoolean("com.projectgalen.gnustep.cmdline.semicolonseparator");
             }
             catch(Exception e) { System.err.println(e.getMessage()); }
 
